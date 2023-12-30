@@ -1,0 +1,16 @@
+.DS_Store
+.eslintrc.js
+.idea
+.env
+.venv
+venv
+.vscode
+*.bak
+*.ipynb
+*.log
+__pycache__
+.pytest_cache
+
+
+# for Project
+moka-ai
