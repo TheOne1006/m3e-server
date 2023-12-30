@@ -8,6 +8,9 @@
 1. 默认(使用 m3e-base 模型)
 ```bash
 docker run -d -p 6800:6800 --gpus all --name m3e-server theone1006/m3e-server
+
+# cpu
+docker run -d -p 6800:6800 --name m3e-server theone1006/m3e-server
 ```
 
 2. 加载多个模型
@@ -22,6 +25,12 @@ docker run -d -p 6800:6800 --name m3e-server theone1006/m3e-server:latest python
 构建时加载
 ```bash
 docker run -d -p 6800:6800 --env  --name m3e-server theone1006/m3e-server:latest
+```
+
+## build script
+
+```bash
+docker build -t theone1006/m3e-server:latest .
 ```
 
 

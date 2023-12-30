@@ -102,6 +102,14 @@ if __name__ == '__main__':
     allow_models = sys.argv[2]
     allow_models_arr = allow_models.split(',')
     
+    if torch.cuda.is_available():
+        print("cuda is available")
+    else:
+        print("cuda is not available")
+    
+    print(f"allow_models: {allow_models}")
+    print(f"app start on port: 0.0.0.0:6800")
+    
     for model_name in allow_models_arr:
         try:
             _ = SentenceTransformer(model_name)
@@ -110,11 +118,4 @@ if __name__ == '__main__':
             print(f"model: {model_name} not supported")
             continue
     
-    if torch.cuda.is_available():
-        print("cuda is available")
-    else:
-        print("cuda is not available")
-    
-    print(f"allow_models: {allow_models}")
-    print(f"app start on port: 0.0.0.0:6800")
     serve(app, host="0.0.0.0", port=6800)
