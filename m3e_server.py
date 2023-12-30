@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request
 import numpy as np
 from sentence_transformers import SentenceTransformer
 import tiktoken
+import torch
 from util_feature import expand_features
 
 
@@ -99,9 +100,6 @@ def route_text_embeddings():
 if __name__ == '__main__':
     import sys
     allow_models = sys.argv[2]
-    
-    print(f"allow_models: {allow_models}")
-    
     allow_models_arr = allow_models.split(',')
     
     for model_name in allow_models_arr:
@@ -112,4 +110,11 @@ if __name__ == '__main__':
             print(f"model: {model_name} not supported")
             continue
     
+    if torch.cuda.is_available():
+        print("cuda is available")
+    else:
+        print("cuda is not available")
+    
+    print(f"allow_models: {allow_models}")
+    print(f"app start on port: 0.0.0.0:6800")
     serve(app, host="0.0.0.0", port=6800)

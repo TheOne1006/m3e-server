@@ -1,0 +1,7 @@
+version: '3'
+services:
+    m3e-server:
+        build: .
+        restart: always
+        ports:
+            - "6800:6800"
