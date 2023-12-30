@@ -12,6 +12,7 @@ ARG EMBEDD="moka-ai/m3e-base"
 COPY requirements.txt /app
 RUN pip install --no-cache-dir -r requirements.txt
 
+ENV HF_HUB_ENABLE_HF_TRANSFER=1
 RUN huggingface-cli download ${EMBEDD} --repo-type model --revision main
 
 COPY util_feature.py /app

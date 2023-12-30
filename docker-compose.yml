@@ -2,6 +2,14 @@ version: '3'
 services:
     m3e-server:
         build: .
+        container_name: m3e-server
         restart: always
         ports:
             - "6800:6800"
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: 1
+                          capabilities: [ gpu ]
