@@ -13,10 +13,8 @@ COPY util_feature.py /app
 COPY m3e_server.py /app
 EXPOSE 6800
 
-ARG EMBEDD="moka-ai/m3e-base"
-ENV ENABLE_BEDDING = ${EMBEDD}
 VOLUME ~/.cache/huggingface/
 
-# python3 m3e_server.py moka-ai/m3e-base,moka-ai/m3e-small
-CMD python3 m3e_server.py ${ENABLE_BEDDING}
+
+CMD ["python3", "m3e_server.py", "--allow_models", "moka-ai/m3e-base"]
 

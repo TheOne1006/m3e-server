@@ -7,30 +7,31 @@
 
 1. 默认(使用 m3e-base 模型)
 ```bash
-docker run -d -p 6800:6800 --gpus all --name m3e-server theone1006/m3e-server
+# 宿主机的 huggingface 缓存目录映射到容器中, 以便加载模型
+docker run -d -p 6800:6800 --gpus all -v ~/.cache/huggingface/:/root/.cache/huggingface/ --name m3e theone1006/m3e-server
 
 # cpu
-docker run -d -p 6800:6800 --name m3e-server theone1006/m3e-server
+docker run -d -p 6800:6800 -v ~/.cache/huggingface/:/root/.cache/huggingface/ --name m3e theone1006/m3e-server
 ```
 
 2. 加载多个模型
 启动时加载, 通过参数指定加载的模型, 例如: 
 
 ```bash
-# 开启 moka-ai/m3e-base 和 moka-ai/m3e-large 模型
-docker run -d -p 6800:6800 --name m3e-server theone1006/m3e-server:latest python m3e-server.py moka-ai/m3e-base,moka-ai/m3e-large
-````
+# 通过 参数 同时开启 moka-ai/m3e-base 和 moka-ai/m3e-large 模型
+docker run  -d -p 6800:6800  -v ~/.cache/huggingface/:/root/.cache/huggingface/ --name m3e theone1006/m3e-server \
+  python3 m3e_server.py --allow_models moka-ai/m3e-base moka-ai/m3e-large
+```
 
-3. 加载自定义模型
-构建时加载
+3. 自定义模型长度
 ```bash
-docker run -d -p 6800:6800 --env  --name m3e-server theone1006/m3e-server:latest
+docker run -d -p 6800:6800 --env EXPORT_DIM=1024  --name m3e theone1006/m3e-server:0.0.1
 ```
 
 ## build script
 
 ```bash
-docker build -t theone1006/m3e-server:latest .
+docker build -t theone1006/m3e-server:0.0.1 .
 ```
 
 

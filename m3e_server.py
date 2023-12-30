@@ -96,11 +96,21 @@ def route_text_embeddings():
 
     return jsonify(response)
 
+def parse_args():
+    import argparse
+    parser = argparse.ArgumentParser()
+    # list of models to allow
+    parser.add_argument('--allow_models', nargs='+',
+                        default=['moka-ai/m3e-base'], type=str, help='list of models to allow')
+    args = parser.parse_args()
+    return args
+
 
 if __name__ == '__main__':
-    import sys
-    allow_models = sys.argv[2]
-    allow_models_arr = allow_models.split(',')
+    import argparse
+    opt = parse_args()
+    
+    allow_models: list[str] = opt.allow_models
     
     if torch.cuda.is_available():
         print("cuda is available")
@@ -110,7 +120,10 @@ if __name__ == '__main__':
     print(f"allow_models: {allow_models}")
     print(f"app start on port: 0.0.0.0:6800")
     
-    for model_name in allow_models_arr:
+    if EXPORT_DIM > 0:
+        print(f"EXPORT_DIM: {EXPORT_DIM}")
+    
+    for model_name in allow_models:
         try:
             _ = SentenceTransformer(model_name)
             enableModels.append(model_name)

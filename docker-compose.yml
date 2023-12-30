@@ -8,10 +8,10 @@ services:
             - "6800:6800"
         volumes:
             - ~/.cache/huggingface/:/root/.cache/huggingface/
-#        deploy:
-#            resources:
-#                reservations:
-#                    devices:
-#                        - driver: nvidia
-#                          count: 1
-#                          capabilities: [ gpu ]
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: 1
+                          capabilities: [ gpu ]
