@@ -23,9 +23,9 @@ docker run  -d -p 6800:6800  -v ~/.cache/huggingface/:/root/.cache/huggingface/ 
   python3 m3e_server.py --allow_models moka-ai/m3e-base moka-ai/m3e-large
 ```
 
-3. 自定义模型长度
+3. 自定义特征维度
 ```bash
-docker run -d -p 6800:6800 --env EXPORT_DIM=1024  --name m3e theone1006/m3e-server:0.0.1
+docker run -d -p 6800:6800 --env EXPORT_DIM=1024  --name m3e theone1006/m3e-server
 ```
 
 ## build script
