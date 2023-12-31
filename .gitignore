@@ -10,6 +10,7 @@ venv
 *.log
 __pycache__
 .pytest_cache
+hf_cache
 
 
 # for Project

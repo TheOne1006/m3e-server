@@ -7,7 +7,10 @@ services:
         ports:
             - "6800:6800"
         volumes:
-            - ~/.cache/huggingface/:/root/.cache/huggingface/
+            - ./hf_cache:/root/.cache
+#        environment:
+#            - TRANSFORMERS_OFFLINE=1
+        command: moka-ai/m3e-base moka-ai/m3e-small
         deploy:
             resources:
                 reservations:

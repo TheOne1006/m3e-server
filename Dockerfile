@@ -13,7 +13,12 @@ COPY util_feature.py /app
 COPY m3e_server.py /app
 
 VOLUME ~/.cache/huggingface/
+# support chinese
+ENV LANG=C.UTF-8
+# disable download model
+#ENV TRANSFORMERS_OFFLINE=1
 
+ENTRYPOINT ["python3", "-u", "m3e_server.py"]
 
-CMD ["python3", "m3e_server.py", "--allow_models", "moka-ai/m3e-base"]
+CMD ["moka-ai/m3e-base"]
 
