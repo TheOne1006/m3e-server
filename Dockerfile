@@ -11,7 +11,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY util_feature.py /app
 COPY m3e_server.py /app
-EXPOSE 6800
 
 VOLUME ~/.cache/huggingface/
 

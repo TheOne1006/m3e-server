@@ -41,7 +41,7 @@ def text_embeddings(model: str, inputs: list[str], export_dims=0) -> dict:
     
     # check enable model
     if full_model not in enableModels:
-        raise ValueError(f"model: {model} not supported")
+        raise ValueError(f"model: {model} not supported, enable models: {enableModels}")
     
     # create instance And cache
     if full_model in cacheModels:
