@@ -85,6 +85,10 @@ def route_text_embeddings():
     data = request.get_json()
     model = data.get('model', 'm3e-base')
     inputs = data.get('input', [])
+
+    # 兼容 string
+    if isinstance(inputs, str):
+        inputs = [inputs]
     
     try:
         response = text_embeddings(model, inputs, EXPORT_DIM)
