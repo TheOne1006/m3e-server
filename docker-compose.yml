@@ -5,7 +5,7 @@ services:
         container_name: m3e-server
         restart: always
         ports:
-            - "8000:8000"
+            - "7860:7860"
         volumes:
             - ./hf_cache:/root/.cache
 #        environment:
