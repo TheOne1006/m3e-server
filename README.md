@@ -3,28 +3,33 @@
 > feature
 - 基于 SentenceTransformer 的服务, hugging face 上 sentence-transformers 模型都可以支持
 
+
+Docker: https://hub.docker.com/r/theone1006/m3e-server
+
 ## usage
+
+- `cp config.template.py config.py` 复制配置文件
 
 1. 默认(使用 m3e-base 模型)
     ```bash
     # 宿主机的 .cache 缓存目录映射到容器中, 以便加载模型
-    docker run -d -p 6800:6800 --gpus all -v ~/.cache/:/root/.cache/ --name m3e theone1006/m3e-server
+    docker run -d -p 6800:6800 --gpus all -v ~/.cache/:/root/.cache/ --name m3e
     
     # cpu
-    docker run -d -p 6800:6800 -v ~/.cache/:/root/.cache/ --name m3e theone1006/m3e-server
+    docker run -d -p 6800:6800 -v ~/.cache/:/root/.cache/ --name m3e
     ```
 
 2. 加载多个模型
    启动时加载, 通过参数指定加载的模型, 例如:
-    ```bash
-    # 通过 参数 同时开启 moka-ai/m3e-base 和 moka-ai/m3e-large 模型
-    docker run -d -p 6800:6800 -v ~/.cache/:/root/.cache/ --name m3e theone1006/m3e-server \
-     moka-ai/m3e-base moka-ai/m3e-large
+    ```python
+    # config.json
+    ALLOW_MODELS = ["moka-ai/m3e-base", "moka-ai/m3e-small"]
     ```
 
 3. 自定义特征维度
-    ```bash
-    docker run -d -p 6800:6800 -v ~/.cache/:/root/.cache/ --env EXPORT_DIM=1024 --name m3e theone1006/m3e-server
+    ```python
+    # config.json
+    EXPORT_DIM=1024
     ```
 
 4. 独立cache
@@ -42,7 +47,7 @@
 ## build script
 
 ```bash
-docker build -t theone1006/m3e-server:0.0.1 .
+docker build -t theone1006/m3e-server .
 ```
 
 

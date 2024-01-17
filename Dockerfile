@@ -10,6 +10,7 @@ COPY requirements.txt /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY util_feature.py /app
+COPY config.py /app
 COPY m3e_server.py /app
 
 VOLUME ~/.cache/huggingface/
@@ -18,7 +19,5 @@ ENV LANG=C.UTF-8
 # disable download model
 #ENV TRANSFORMERS_OFFLINE=1
 
-ENTRYPOINT ["python3", "-u", "m3e_server.py"]
-
-CMD ["moka-ai/m3e-base"]
+CMD ["uvicorn", "m3e_server:app", "--host", "0.0.0.0", "--port", "7860"]
 

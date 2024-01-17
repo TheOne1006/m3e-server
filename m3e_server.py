@@ -1,12 +1,12 @@
-import os.path
-from waitress import serve
-from flask import Flask, jsonify, request
+import uvicorn
+from fastapi import FastAPI
+from pydantic import BaseModel
 import numpy as np
 from sentence_transformers import SentenceTransformer
 import tiktoken
 import torch
 from util_feature import expand_features
-
+from config import ALLOW_MODELS, EXPORT_DIM, NORMALIZE
 
 shortModel = {
     "m3e-base": "moka-ai/m3e-base",
@@ -14,11 +14,10 @@ shortModel = {
     "m3e-small": "moka-ai/m3e-small",
 }
 
-
 enableModels = []
 cacheModels = {}
 
-app = Flask(__name__)
+app = FastAPI(docs_url='/')
 
 
 def num_tokens_from_string(string: str) -> int:
@@ -26,14 +25,6 @@ def num_tokens_from_string(string: str) -> int:
     encoding = tiktoken.get_encoding('cl100k_base')
     num_tokens = len(encoding.encode(string))
     return num_tokens
-
-
-EXPORT_DIM = os.environ.get('EXPORT_DIM', '0')
-try:
-    EXPORT_DIM = int(EXPORT_DIM)
-except ValueError as e:
-    print(f"EXPORT_DIM :{EXPORT_DIM} is Error")
-    EXPORT_DIM = 0
 
 
 def text_embeddings(model: str, inputs: list[str], export_dims=0) -> dict:
@@ -49,18 +40,18 @@ def text_embeddings(model: str, inputs: list[str], export_dims=0) -> dict:
     else:
         embeddingModel = SentenceTransformer(full_model)
         cacheModels[full_model] = embeddingModel
-        
     embeddings = embeddingModel.encode(inputs)
     
     if export_dims > 0:
         embeddings = [expand_features(item, export_dims) if len(item) < export_dims else item for item in embeddings]
     
-    embeddings = [embedding / np.linalg.norm(embedding) for embedding in embeddings]
-
+    if NORMALIZE:
+        embeddings = [embedding / np.linalg.norm(embedding) for embedding in embeddings]
+    
     embeddings = [embedding.tolist() for embedding in embeddings]
     prompt_tokens = sum(len(text.split()) for text in inputs)
     total_tokens = sum(num_tokens_from_string(text) for text in inputs)
-        
+    
     response = {
         "data": [
             {
@@ -80,33 +71,28 @@ def text_embeddings(model: str, inputs: list[str], export_dims=0) -> dict:
     return response
 
 
-@app.route('/v1/embeddings', methods=['POST'])
-def route_text_embeddings():
-    data = request.get_json()
-    model = data.get('model', 'm3e-base')
-    inputs = data.get('input', [])
+class EmbeddingBody(BaseModel):
+    model: str = 'm3e-base',
+    input: list[str] | str = None,
 
+
+@app.post('/v1/embeddings')
+def route_text_embeddings(item: EmbeddingBody):
+    model = item.model
+    inputs = item.input
+    
     # 兼容 string
     if isinstance(inputs, str):
         inputs = [inputs]
     
-    try:
-        response = text_embeddings(model, inputs, EXPORT_DIM)
-    except ValueError as e:
-        err_msg = {
-            "error": str(e)
-        }
-        return jsonify(err_msg), 400
-
-    return jsonify(response)
-
-
-if __name__ == '__main__':
-    import sys
-    allow_models = sys.argv[1:]
+    response = text_embeddings(model, inputs, EXPORT_DIM)
     
-    print("checking models: ", allow_models)
-    for model_name in allow_models:
+    return response
+
+
+def check_server():
+    print("checking models: ", ALLOW_MODELS)
+    for model_name in ALLOW_MODELS:
         try:
             _ = SentenceTransformer(model_name)
             enableModels.append(model_name)
@@ -120,9 +106,11 @@ if __name__ == '__main__':
         print("cuda is available")
     else:
         print("cuda is not available")
-    print(f"app start on port: 0.0.0.0:6800")
     
     if EXPORT_DIM > 0:
         print(f"EXPORT_DIM: {EXPORT_DIM}")
-    
-    serve(app, port=6800)
+
+check_server()
+
+if __name__ == '__main__':
+    uvicorn.run(app=app)

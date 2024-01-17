@@ -11,7 +11,7 @@ venv
 __pycache__
 .pytest_cache
 hf_cache
-
+config.py
 
 # for Project
 moka-ai
